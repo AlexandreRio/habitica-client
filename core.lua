@@ -16,6 +16,7 @@ end
 
 function habitica.request(path, method, body)
   local headers = habitica:getHeaders()
+  local response = {}
 
   if (body ~= nil) then
     local jsonbody = json.encode(body)
@@ -25,17 +26,19 @@ function habitica.request(path, method, body)
       url = "https://habitica.com/api/v3/" .. path,
       method = method,
       source = ltn12.source.string(jsonbody),
-      sink = ltn12.sink.file(io.stdout),
+      sink = ltn12.sink.table(response),
       headers = headers
     }
   else
     https.request{
       url = "https://habitica.com/api/v3/" .. path,
       method = method,
-      sink = ltn12.sink.file(io.stdout),
+      sink = ltn12.sink.table(response),
       headers = headers
     }
   end
+
+  return json.decode(table.concat(response))
 end
 
 function habitica.create_todo(text)
@@ -44,15 +47,16 @@ function habitica.create_todo(text)
   req["text"] = text
 
   local url = "tasks/user"
-  habitica.request(url, "POST", req)
+
+  return habitica.request(url, "POST", req)
 end
 
 function habitica.list_tasks()
-  habitica.request("tasks/user", "GET", nil)
+  return habitica.request("tasks/user", "GET", nil)
 end
 
 function habitica.getTags()
-  habitica.request("tags", "GET", nil)
+  return habitica.request("tags", "GET", nil)
 end
 
 return habitica
