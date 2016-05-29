@@ -16,9 +16,10 @@ end
 
 function habitica.request(path, method, body)
   local headers = habitica:getHeaders()
-  local jsonbody = json.encode(body)
 
-  if (#jsonbody > 0) then
+  if (body ~= nil) then
+    local jsonbody = json.encode(body)
+
     headers["content-length"] = #jsonbody
     https.request{
       url = "https://habitica.com/api/v3/" .. path,
@@ -47,5 +48,11 @@ function habitica.create_todo(text)
 end
 
 function habitica.list_tasks()
-  habitica.request("tasks/user", "GET", "")
+  habitica.request("tasks/user", "GET", nil)
 end
+
+function habitica.getTags()
+  habitica.request("tags", "GET", nil)
+end
+
+return habitica
