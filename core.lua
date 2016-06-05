@@ -38,13 +38,18 @@ function habitica.request(path, method, body)
     }
   end
 
-  return json.decode(table.concat(response))
+  response = json.decode(table.concat(response))
+  return response.success, response.message, response.data
 end
 
-function habitica.create_todo(text)
+function habitica.create_todo(text, tag)
   local req = {}
   req["type"] = "todo"
   req["text"] = text
+
+  if (tag ~= nil) then
+    req["tags"] = tag
+  end
 
   local url = "tasks/user"
 
