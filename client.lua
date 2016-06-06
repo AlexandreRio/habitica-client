@@ -28,10 +28,11 @@ end
 
 initTags()
 text   = C.ask("Enter task: ")
+tagsName[#tagsName+1] = "None"
 choice = C.choose("Which tag?", tagsName)
 
 s,m,d = core.create_todo(text, getTagIdFromName(choice))
-if (s == True) then
+if (s == true) then
   print "Task successfully created"
 end
 
